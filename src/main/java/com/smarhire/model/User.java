@@ -1,7 +1,7 @@
 package com.smarhire.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -12,16 +12,16 @@ public class User {
     private Long id;
 
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    @JsonIgnore   // hides password in Postman response
     private String password;
 
-    private LocalDateTime createdAt;
+    // ✅ CORRECT GETTERS & SETTERS
 
-    // ✅ REQUIRED
-    public User() {
-    }
-
-    // Getters & Setters
     public Long getId() {
         return id;
     }
@@ -52,13 +52,5 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }

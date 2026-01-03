@@ -3,9 +3,9 @@ package com.smarhire.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.smarhire.exception.EmailAlreadyExistsException;
 import com.smarhire.model.User;
 import com.smarhire.repository.UserRepository;
-import com.smarhire.exception.EmailAlreadyExistsException;
 
 @Service
 public class AuthService {
@@ -25,10 +25,7 @@ public class AuthService {
             throw new EmailAlreadyExistsException("Email already registered");
         }
 
-        // 🔐 Encrypt password
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 }
