@@ -14,7 +14,6 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    // ✅ Constructor injection
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
@@ -29,26 +28,22 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
+
             .authorizeHttpRequests(auth -> auth
-                // ✅ allow ALL auth endpoints (login, register, future ones)
-            		
+                // ✅ PUBLIC ENDPOINTS
                 .requestMatchers("/auth/**").permitAll()
-                
 
-                // ✅ allow OPTIONS (important for POST requests)
-                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                
-
-
-                // role based
+                // 🔐 PROTECTED ENDPOINTS
                 .requestMatchers("/jobs/create").hasRole("RECRUITER")
-                .requestMatchers("/jobs").permitAll()
+                .requestMatchers("/jobs/apply").hasRole("JOB_SEEKER")
 
                 .anyRequest().authenticated()
-            	            )
-            .addFilterBefore(jwtAuthenticationFilter,
-                    UsernamePasswordAuthenticationFilter.class)
-            .formLogin(form -> form.disable());
+            )
+
+            .addFilterBefore(
+                jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class
+            );
 
         return http.build();
     }
