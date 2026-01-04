@@ -1,8 +1,13 @@
 package com.smarhire.controller;
 
+import jakarta.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.smarhire.model.User;
+import com.smarhire.dto.LoginRequest;
+import com.smarhire.dto.LoginResponse;   // ✅ ADD THIS
+import com.smarhire.dto.RegisterRequest;
 import com.smarhire.service.AuthService;
 
 @RestController
@@ -15,8 +20,18 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return authService.register(user);
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest request) {
+
+        return ResponseEntity.ok(authService.login(request));
     }
+    @PostMapping("/register")
+    public ResponseEntity<String> register(
+            @Valid @RequestBody RegisterRequest request) {
+
+        authService.register(request);
+        return ResponseEntity.ok("User registered successfully");
+    }
+
 }

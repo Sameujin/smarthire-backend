@@ -1,38 +1,24 @@
-package com.smarhire.model;
+package com.smarhire.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
-@Entity
-@Table(name = "users")
-public class User {
+public class RegisterRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @NotBlank(message = "Name is required")
     private String name;
 
-    @Column(unique = true, nullable = false)
+    @Email(message = "Invalid email")
+    @NotBlank(message = "Email is required")
     private String email;
 
-    @Column(nullable = false)
-    @JsonIgnore   // hides password in Postman response
+    @NotBlank(message = "Password is required")
     private String password;
 
-    @Column(nullable = false)
-    private String role;
+    @NotBlank(message = "Role is required")
+    private String role;   // RECRUITER or JOB_SEEKER
 
-    // ✅ GETTERS & SETTERS
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    // ✅ Getters & Setters
     public String getName() {
         return name;
     }
