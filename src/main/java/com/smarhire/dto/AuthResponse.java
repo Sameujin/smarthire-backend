@@ -1,11 +1,11 @@
 package com.smarhire.dto;
 
-public class LoginResponse {
+public class AuthResponse {
 
     private String token;
     private String role;
 
-    public LoginResponse(String token, String role) {
+    public AuthResponse(String token, String role) {
         this.token = token;
         this.role = role;
     }

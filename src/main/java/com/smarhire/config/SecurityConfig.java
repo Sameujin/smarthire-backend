@@ -3,7 +3,9 @@ package com.smarhire.config;
 import com.smarhire.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,22 +26,34 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+            // 🔒 JWT = STATELESS
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+
             .csrf(csrf -> csrf.disable())
 
             .authorizeHttpRequests(auth -> auth
-                // ✅ PUBLIC ENDPOINTS
+
+                // 🔓 AUTH APIs
                 .requestMatchers("/auth/**").permitAll()
 
-                // 🔐 PROTECTED ENDPOINTS
+                // 🔓 PUBLIC JOB LIST
+                .requestMatchers(HttpMethod.GET, "/jobs/**").permitAll()
+
+                // 🔐 RECRUITER
                 .requestMatchers("/jobs/create").hasRole("RECRUITER")
-                .requestMatchers("/jobs/apply").hasRole("JOB_SEEKER")
+
+                // 🔐 CANDIDATE
+                .requestMatchers("/applications/**").hasRole("CANDIDATE")
 
                 .anyRequest().authenticated()
             )
 
+            // ✅ REGISTER JWT FILTER
             .addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class
